@@ -1,0 +1,1 @@
+Real-time, multilingual AI plagiarism detection with actionable feedback.
