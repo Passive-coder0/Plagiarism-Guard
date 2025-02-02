@@ -4,10 +4,10 @@ import { useState } from "react";
 function App() {
   const [activeTab, setActiveTab] = useState("result");
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen main">
       {/* Navbar */}
-      <nav className="fixed top-0 w-full bg-white shadow-md z-50">
-        <div className="container mx-auto px-12 py-2 flex justify-between items-center">
+      <nav className="fixed top-0 w-full bg-white shadow-sm z-50">
+        <div className="container mx-auto px-12 py-2 flex justify-center md:justify-between items-center">
           <div className="flex items-center">
             <div className="mr-4 pt-2">
               <svg
@@ -29,7 +29,7 @@ function App() {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
             </span>
           </div>
-          <div className="flex space-x-8">
+          <div className="hidden md:flex space-x-8">
             <a
               href="#home"
               className="text-gray-700 hover:text-blue-600 relative group transition-colors duration-300"
@@ -58,61 +58,73 @@ function App() {
       {/* Home Section */}
       <section id="home" className="pt-28 pb-16 px-6">
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Textarea and Buttons Section */}
           <div className="w-full">
             <textarea
-              className="w-full h-[500px] p-4 border rounded-lg shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset] resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none "
+              className="w-full placeholder:text-xl h-[450px] p-4 border rounded-lg shadow-[rgba(6,_24,_44,_0.2)_0px_0px_0px_1px,_rgba(6,_24,_44,_0.3)_0px_2px_4px_-1px,_rgba(255,_255,_255,_0.05)_0px_1px_0px_inset] resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               placeholder="Enter your text here..."
             />
-            <div className="mt-4 flex items-center space-x-4 ">
-              <button className="p-2 rounded-full border hover:bg-gray-300 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                  />
-                </svg>
-              </button>
-              <button className="p-2 rounded-full border hover:bg-gray-300 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-              </button>
-              <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
+            <div className="mt-4 flex items-center space-x-4">
+              {/* Button 1 */}
+              <div className="rounded-full shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
+                <button className="rotate-on-hover p-2 rounded-full border hover:bg-gray-200">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Button 2 */}
+              <div className="rounded-full shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
+                <button className="rotate-on-hover p-2 rounded-full border hover:bg-gray-200">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Scan Button (No Rotation) */}
+              <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
                 Scan
               </button>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
+          {/* Result and Feedback Section */}
+          <div className="bg-white h-[450px] box-border p-6 rounded-lg shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+            {/* Tab Buttons */}
             <div className="flex space-x-4 mb-6">
               <button
-                className={`px-4 py-2 text-gray-700 font-medium rounded-lg hover:text-blue-600  cursor-pointer ${
-                  activeTab === "result" ? "text-blue-600  bg-slate-200" : ""
+                className={`px-4 py-2 text-gray-700 font-medium rounded-lg hover:text-blue-600 cursor-pointer ${
+                  activeTab === "result" ? "text-blue-600 bg-slate-100" : ""
                 }`}
                 onClick={() => setActiveTab("result")}
               >
                 Result
               </button>
               <button
-                className={`px-4 py-2 text-gray-700 font-medium rounded-lg hover:text-blue-600  cursor-pointer ${
-                  activeTab === "feedback" ? "text-blue-600 bg-slate-200 " : ""
+                className={`px-4 py-2 text-gray-700 font-medium rounded-lg hover:text-blue-600 cursor-pointer ${
+                  activeTab === "feedback" ? "text-blue-600 bg-slate-100" : ""
                 }`}
                 onClick={() => setActiveTab("feedback")}
               >
@@ -120,46 +132,67 @@ function App() {
               </button>
             </div>
 
-            <div className="flex justify-center items-center mb-6">
-              <div className="relative w-32 h-32">
-                <div className="text-center">
-                  <span className="text-5xl font-bold">0</span>
-                  <p className="text-sm text-gray-500">Plagiarized</p>
+            {/* Result Tab Content */}
+            {activeTab === "result" ? (
+              <div>
+                {/* Plagiarism Score */}
+                <div className="flex justify-center items-center mb-5">
+                  <div className="relative w-32 h-32">
+                    <div className="text-center">
+                      <span className="text-5xl font-bold">0</span>
+                      <p className=" text-gray-500 mt-4">Plagiarized</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="space-y-4">
-              <div className="text-sm text-gray-600">
-                This score reflects the uniqueness of your text. Improve it by
-                addressing flagged content
-              </div>
+                {/* Score Description */}
+                <div className="space-y-4">
+                  <div className="text-sm text-gray-600">
+                    This score reflects the uniqueness of your text. Improve it
+                    by addressing flagged content.
+                  </div>
 
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span>AI Generated</span>
-                  <span>0/100</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Sources attribution</span>
-                  <span>0/100</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Similar Words</span>
-                  <span>0/100</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Citations</span>
-                  <span>0/100</span>
+                  {/* Metrics */}
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span>AI Generated</span>
+                      <span>0/100</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Sources Attribution</span>
+                      <span>0/100</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Similar Words</span>
+                      <span>0/100</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Citations</span>
+                      <span>0/100</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              /* Feedback Tab Content */
+              <div className="flex flex-col items-center gap-6">
+                <h2 className="text-2xl font-semibold md:mb-5 ">
+                  Here is some feedback:
+                </h2>
+                <p className="text-gray-600 text-center">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit
+                  eaque quis tenetur a voluptate blanditiis, atque eveniet error
+                  commodi quia obcaecati recusandae, quas dolorum possimus
+                  voluptates, minima saepe culpa eligendi!
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-16 bg-white">
+      <section id="about" className="py-16 px-6 bg-white">
         <div className="container mx-auto px-6">
           <h2 className="text-3xl font-bold text-center mb-14">
             About The Project
@@ -185,7 +218,7 @@ function App() {
                 learning proper citation practices.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed">
-                Whether you're a professor verifying submissions or a student
+                Whether you are a professor verifying submissions or a student
                 aiming to improve, Plagiarism Guard offers the tools and support
                 to achieve academic integrity and excellence.
               </p>
@@ -222,7 +255,7 @@ function App() {
                 placeholder="Your Message"
                 className="w-full p-3 border rounded-lg h-32"
               />
-              <button className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
+              <button className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
                 Send Message
               </button>
             </form>
