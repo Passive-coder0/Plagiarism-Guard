@@ -3,6 +3,46 @@ import { useState } from "react";
 
 function App() {
   const [activeTab, setActiveTab] = useState("result");
+  const [text, setText] = useState("");
+  const [results, setResults] = useState({
+    plagiarism_percentage: "0%",
+    ai_generated: false,
+    sources_attribution: 0,
+    similar_words: 0,
+    citations: 0,
+    feedback: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  // Add this function to handle API call
+  const handleScan = async () => {
+    if (!text.trim()) return;
+
+    setLoading(true);
+    console.log("Sending text:", text); // Add this
+
+    try {
+      const response = await fetch(
+        "https://web-production-d4f59.up.railway.app/detect",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text }),
+        }
+      );
+      console.log("Response status:", response.status); // Add this
+
+      const data = await response.json();
+      console.log("Received data:", data); // Add this
+
+      setResults(data);
+    } catch (error) {
+      console.error("Error details:", error); // Enhanced error logging
+    }
+    setLoading(false);
+  };
   return (
     <div className="min-h-screen main">
       {/* Navbar */}
@@ -61,6 +101,8 @@ function App() {
           {/* Textarea and Buttons Section */}
           <div className="w-full">
             <textarea
+              value={text} // Add this
+              onChange={(e) => setText(e.target.value)} // Add this
               className="w-full placeholder:text-xl h-[450px] p-4 border rounded-lg shadow-[rgba(6,_24,_44,_0.2)_0px_0px_0px_1px,_rgba(6,_24,_44,_0.3)_0px_2px_4px_-1px,_rgba(255,_255,_255,_0.05)_0px_1px_0px_inset] resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               placeholder="Enter your text here..."
             />
@@ -103,9 +145,13 @@ function App() {
                 </button>
               </div>
 
-              {/* Scan Button (No Rotation) */}
-              <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
-                Scan
+              {/* Scan Button */}
+              <button
+                onClick={handleScan} // Add this
+                disabled={loading} // Add this
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]"
+              >
+                {loading ? "Scanning..." : "Scan"}
               </button>
             </div>
           </div>
@@ -132,58 +178,54 @@ function App() {
               </button>
             </div>
 
-            {/* Result Tab Content */}
+            {/* Results section */}
             {activeTab === "result" ? (
               <div>
-                {/* Plagiarism Score */}
                 <div className="flex justify-center items-center mb-5">
                   <div className="relative w-32 h-32">
                     <div className="text-center">
-                      <span className="text-5xl font-bold">0</span>
-                      <p className=" text-gray-500 mt-4">Plagiarized</p>
+                      <span className="text-5xl font-bold">
+                        {results.plagiarism_percentage.replace("%", "")}
+                      </span>
+                      <p className="text-gray-500 mt-4">Plagiarized</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Score Description */}
                 <div className="space-y-4">
                   <div className="text-sm text-gray-600">
                     This score reflects the uniqueness of your text. Improve it
                     by addressing flagged content.
                   </div>
 
-                  {/* Metrics */}
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center pr-2">
                       <span>AI Generated</span>
-                      <span>0/100</span>
+                      <span>{results.ai_generated ? "True" : "False"}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span>Sources Attribution</span>
-                      <span>0/100</span>
+                      <span>{results.sources_attribution}/100</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span>Similar Words</span>
-                      <span>0/100</span>
+                      <span>{results.similar_words}/100</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span>Citations</span>
-                      <span>0/100</span>
+                      <span>{results.citations}/100</span>
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
-              /* Feedback Tab Content */
               <div className="flex flex-col items-center gap-6">
-                <h2 className="text-2xl font-semibold md:mb-5 ">
+                <h2 className="text-2xl font-semibold md:mb-5">
                   Here is some feedback:
                 </h2>
                 <p className="text-gray-600 text-center">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit
-                  eaque quis tenetur a voluptate blanditiis, atque eveniet error
-                  commodi quia obcaecati recusandae, quas dolorum possimus
-                  voluptates, minima saepe culpa eligendi!
+                  {results.feedback ||
+                    "No feedback available yet. Scan your text to get detailed feedback."}
                 </p>
               </div>
             )}
