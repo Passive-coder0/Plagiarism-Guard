@@ -8,10 +8,235 @@ html {
 
 .main {
   background-color: #FCFDFE;
+  color: #172033;
+  transition: background-color 0.45s ease, color 0.45s ease;
 }
 
-/* Add this to your CSS file or style tag */
-button.rotate-on-hover:hover {
-  transform: rotate(360deg);
-  transition: transform 0.5s ease-in-out; /* Adjust timing as needed */
+input[type="file"] {
+  display: none;
+}
+
+.scan-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(241, 246, 255, 0.68);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .scan-overlay {
+  background: rgba(7, 13, 25, 0.76);
+}
+
+.scan-loader {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 230px;
+  height: 230px;
+}
+
+.scan-logo {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 12px 18px rgba(63, 89, 255, 0.35));
+  animation: logo-breathe 4s ease-in-out infinite;
+}
+
+.scan-ring {
+  position: absolute;
+  border: 1px solid rgba(63, 89, 255, 0.5);
+  border-radius: 50%;
+  animation: ring-pulse 4s ease-out infinite;
+}
+
+.scan-ring-one {
+  width: 132px;
+  height: 132px;
+}
+
+.scan-ring-two {
+  width: 184px;
+  height: 184px;
+  animation-delay: 1.15s;
+}
+
+.scan-line {
+  position: absolute;
+  z-index: 3;
+  width: 170px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #6c86ff, transparent);
+  box-shadow: 0 0 14px 3px rgba(108, 134, 255, 0.7);
+  animation: scan-sweep 4s ease-in-out infinite;
+}
+
+.scan-label {
+  position: absolute;
+  top: calc(50% + 116px);
+  margin: 0;
+  color: #3f59ff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  animation: label-fade 4s ease-in-out infinite;
+}
+
+@keyframes logo-breathe {
+  0%, 100% { transform: scale(0.94); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes ring-pulse {
+  0% { opacity: 0; transform: scale(0.72); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.16); }
+}
+
+@keyframes scan-sweep {
+  0%, 100% { transform: translateY(-68px); opacity: 0; }
+  15%, 80% { opacity: 1; }
+  50% { transform: translateY(68px); }
+}
+
+@keyframes label-fade {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+.theme-toggle {
+  width: 58px;
+  height: 32px;
+  padding: 3px;
+  border: 1px solid #dbe4f0;
+  border-radius: 999px;
+  background: #eef4ff;
+  cursor: pointer;
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.theme-toggle-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #3f59ff;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(28, 45, 80, 0.22);
+  transform: translateX(0);
+  transition: transform 0.4s cubic-bezier(0.68, -0.25, 0.25, 1.25), color 0.35s ease, background-color 0.35s ease;
+}
+
+.theme-toggle.is-dark {
+  background: #202d4a;
+  border-color: #3e5278;
+}
+
+.theme-toggle.is-dark .theme-toggle-thumb {
+  color: #f8c95b;
+  background: #101827;
+  transform: translateX(24px) rotate(180deg);
+}
+
+.theme-toggle svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.moon-icon {
+  display: none;
+}
+
+.theme-toggle.is-dark .sun-icon {
+  display: none;
+}
+
+.theme-toggle.is-dark .moon-icon {
+  display: block;
+  fill: currentColor;
+  stroke-width: 1.4;
+}
+
+.dark {
+  background-color: #101827;
+}
+
+.dark .theme-nav,
+.dark .theme-section,
+.dark .theme-panel {
+  background-color: #172236;
+  color: #edf3ff;
+}
+
+.dark .theme-contact {
+  background-color: #0d1421;
+}
+
+.dark .text-gray-700,
+.dark .text-gray-800,
+.dark .text-gray-600,
+.dark .text-gray-500 {
+  color: #b8c5db;
+}
+
+.dark textarea,
+.dark input {
+  color: #edf3ff;
+  background-color: #172236;
+  border-color: #3b4c68;
+}
+
+.dark textarea::placeholder,
+.dark input::placeholder {
+  color: #8292ad;
+}
+
+.dark .hover\\:bg-gray-200:hover {
+  background-color: #263653;
+}
+
+.dark .bg-slate-100 {
+  background-color: #2b3b5b;
+}
+
+.dark .editor-icon-button {
+  color: #dbe7ff;
+  background-color: #1d2b44;
+  border-color: #52698f;
+}
+
+.dark .editor-icon-button:hover {
+  background-color: #2a3d5f;
+}
+
+.editor-icon-button {
+  display: inline-flex;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.file-error {
+  margin-top: 0.65rem;
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+.dark .file-error {
+  color: #fca5a5;
+}
+
+.editor-icon-button:hover {
+  transform: scale(1.08);
 }

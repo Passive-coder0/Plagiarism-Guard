@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Unnecessary files
+Project_Brief__PlagiarismGuard.pdf
+Plagiarism Detection Documentation.docx
+Plagiarism Guard Presentation.pdf
