@@ -6,7 +6,7 @@ import brushIcon from "/brush.svg";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.mjs",
-  import.meta.url
+  import.meta.url,
 ).toString();
 
 const supportedFileTypes = [
@@ -25,20 +25,39 @@ const supportedFileTypes = [
   ".docx",
 ];
 
+const emptyResults = {
+  plagiarism_percentage: 0,
+  ai_generated_likelihood: 0,
+  writing_quality: 0,
+  readability: 0,
+  sources_attribution: 0,
+  citations: 0,
+  feedback: "",
+};
+
+const normalizeScanResults = (data) => {
+  const response = Array.isArray(data) ? data[0] : data;
+  const output = response?.output ?? response ?? {};
+
+  return {
+    plagiarism_percentage: output.plagiarism_percentage ?? 0,
+    ai_generated_likelihood: output.ai_generated_likelihood ?? 0,
+    writing_quality: output.writing_quality ?? 0,
+    readability: output.readability ?? 0,
+    sources_attribution: output.sources_attribution ?? 0,
+    citations: output.citations ?? 0,
+    feedback: output.feedback ?? "",
+  };
+};
+
 function App() {
   const [activeTab, setActiveTab] = useState("result");
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [text, setText] = useState("");
-  const [results, setResults] = useState({
-    plagiarism_percentage: "0%",
-    ai_generated: false,
-    sources_attribution: 0,
-    similar_words: 0,
-    citations: 0,
-    feedback: "",
-  });
+  const [results, setResults] = useState(emptyResults);
   const [loading, setLoading] = useState(false);
   const [fileError, setFileError] = useState("");
+  const [scanWarning, setScanWarning] = useState("");
 
   const extractPdfText = async (file) => {
     const pdf = await pdfjsLib.getDocument({
@@ -60,7 +79,9 @@ function App() {
     const isPlainTextFile = file.type.startsWith("text/");
 
     if (!supportedFileTypes.includes(extension) && !isPlainTextFile) {
-      throw new Error("Please choose a TXT, MD, CSV, JSON, PDF, DOCX, or other text file.");
+      throw new Error(
+        "Please choose a TXT, MD, CSV, JSON, PDF, DOCX, or other text file.",
+      );
     }
 
     if (extension === ".pdf") {
@@ -84,6 +105,7 @@ function App() {
     if (!file) return;
 
     setFileError("");
+    setScanWarning("");
 
     try {
       const extractedText = await extractFileText(file);
@@ -101,36 +123,51 @@ function App() {
   const handleClear = () => {
     setText("");
     setFileError("");
+    setScanWarning("");
   };
 
-  // Add this function to handle API call
   const handleScan = async () => {
-    if (!text.trim()) return;
+    if (!text.trim()) {
+      setScanWarning("Enter an essay before starting the scan.");
+      return;
+    }
+
+    setScanWarning("");
 
     setLoading(true);
-    console.log("Sending text:", text); // Add this
+    const scanStartedAt = Date.now();
 
     try {
-      const response = await fetch(
-        "https://web-production-d4f59.up.railway.app/detect",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ text }),
-        }
-      );
-      console.log("Response status:", response.status); // Add this
+      const scanEndpoint = import.meta.env.DEV
+        ? "/api/plagiarism-scan"
+        : "https://preface-wildness-elves.ngrok-free.dev/webhook-test/plagiarism-scan";
+      const response = await fetch(scanEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Scan request failed with status ${response.status}.`);
+      }
 
       const data = await response.json();
-      console.log("Received data:", data); // Add this
-
-      setResults(data);
+      setResults(normalizeScanResults(data));
     } catch (error) {
-      console.error("Error details:", error); // Enhanced error logging
+      console.error("Scan request failed:", error);
+      setResults(emptyResults);
+    } finally {
+      const remainingAnimationTime = Math.max(
+        0,
+        3000 - (Date.now() - scanStartedAt),
+      );
+      await new Promise((resolve) =>
+        setTimeout(resolve, remainingAnimationTime),
+      );
+      setLoading(false);
     }
-    setLoading(false);
   };
   return (
     <div className={`min-h-screen main ${isDarkMode ? "dark" : ""}`}>
@@ -208,7 +245,9 @@ function App() {
           </div>
           <button
             type="button"
-            aria-label={isDarkMode ? "Switch to light theme" : "Switch to dark theme"}
+            aria-label={
+              isDarkMode ? "Switch to light theme" : "Switch to dark theme"
+            }
             aria-pressed={isDarkMode}
             className={`theme-toggle ${isDarkMode ? "is-dark" : ""}`}
             onClick={() => setIsDarkMode((currentMode) => !currentMode)}
@@ -233,10 +272,18 @@ function App() {
           <div className="w-full">
             <textarea
               value={text} // Add this
-              onChange={(e) => setText(e.target.value)} // Add this
+              onChange={(e) => {
+                setText(e.target.value);
+                setScanWarning("");
+              }}
               className="w-full placeholder:text-xl h-[450px] p-4 border rounded-lg shadow-[rgba(6,_24,_44,_0.2)_0px_0px_0px_1px,_rgba(6,_24,_44,_0.3)_0px_2px_4px_-1px,_rgba(255,_255,_255,_0.05)_0px_1px_0px_inset] resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               placeholder="Enter your text here..."
             />
+            {scanWarning && (
+              <p className="scan-warning" role="alert">
+                {scanWarning}
+              </p>
+            )}
             <div className="mt-4 flex items-center space-x-4">
               {/* Button 1 */}
               <div className="rounded-full shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
@@ -282,6 +329,7 @@ function App() {
 
               {/* Scan Button */}
               <button
+                type="button"
                 onClick={handleScan} // Add this
                 disabled={loading} // Add this
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]"
@@ -297,7 +345,7 @@ function App() {
             {/* Tab Buttons */}
             <div className="flex space-x-4 mb-6">
               <button
-                className={`px-4 py-2 text-gray-700 font-medium rounded-lg hover:text-blue-600 cursor-pointer ${
+                className={`px-4 py-2 text-gray-700 font-medium rounded-lg border-2  hover:text-blue-600 cursor-pointer ${
                   activeTab === "result" ? "text-blue-600 bg-slate-100" : ""
                 }`}
                 onClick={() => setActiveTab("result")}
@@ -305,7 +353,7 @@ function App() {
                 Result
               </button>
               <button
-                className={`px-4 py-2 text-gray-700 font-medium rounded-lg hover:text-blue-600 cursor-pointer ${
+                className={`px-4 py-2 text-gray-700 font-medium rounded-lg border-2 hover:text-blue-600 cursor-pointer ${
                   activeTab === "feedback" ? "text-blue-600 bg-slate-100" : ""
                 }`}
                 onClick={() => setActiveTab("feedback")}
@@ -321,7 +369,7 @@ function App() {
                   <div className="relative w-32 h-32">
                     <div className="text-center">
                       <span className="text-5xl font-bold">
-                        {results.plagiarism_percentage.replace("%", "")}
+                        {results.plagiarism_percentage + "%"}
                       </span>
                       <p className="text-gray-500 mt-4">Plagiarism Score</p>
                     </div>
@@ -337,15 +385,20 @@ function App() {
                   <div className="space-y-5 flex-col justify-center w-full">
                     <div className="flex justify-between items-center">
                       <span>AI-Generated Likelihood</span>
-                      <span>{results.ai_generated || "0"}/100</span>
+                      <span>{results.ai_generated_likelihood || "0"}/100%</span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span>Writing Quality</span>
+                      <span>{results.writing_quality}/100%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span>Sources Attribution</span>
-                      <span>{results.sources_attribution}/100</span>
+                      <span>Readability</span>
+                      <span>{results.readability}/100%</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span>Citation Quality</span>
-                      <span>{results.citations}/100</span>
+                    <div className="flex justify-between items-center pr-3.5">
+                      <span>Citations</span>
+                      <span>{results.citations}</span>
                     </div>
                   </div>
                 </div>
@@ -355,7 +408,13 @@ function App() {
                 <h2 className="text-2xl font-semibold md:mb-5">
                   Here is some feedback:
                 </h2>
-                <p className="text-gray-600 text-center">
+                <p
+                  className={`text-center text-lg ${
+                    results.feedback?.trim()
+                      ? "feedback-text"
+                      : "text-gray-600"
+                  }`}
+                >
                   {results.feedback ||
                     "No feedback available yet. Scan your text to get detailed feedback."}
                 </p>
@@ -417,7 +476,9 @@ function App() {
       {/* Contact Section */}
       <section id="contact" className="py-16 bg-gray-50 theme-contact">
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-8">Contact Us</h2>
+          <h2 className="text-3xl font-bold text-center mb-8 dark:text-white">
+            Contact Us
+          </h2>
           <div className="max-w-md mx-auto">
             <form className="space-y-4">
               <input
@@ -431,8 +492,8 @@ function App() {
               />
             </form>
             <button className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
-                Send Message
-              </button>
+              Send Message
+            </button>
           </div>
         </div>
       </section>

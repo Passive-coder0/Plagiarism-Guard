@@ -227,6 +227,30 @@ input[type="file"] {
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
+.dark .editor-icon-button img {
+  filter: brightness(0) invert(1);
+}
+
+.feedback-text {
+  color: #166534;
+  font-weight: 500;
+}
+
+.dark .feedback-text {
+  color: #86efac;
+}
+
+.scan-warning {
+  margin-top: 0.65rem;
+  color: #92400e;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dark .scan-warning {
+  color: #fcd34d;
+}
+
 .file-error {
   margin-top: 0.65rem;
   color: #dc2626;
